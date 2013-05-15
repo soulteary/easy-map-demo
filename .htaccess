@@ -1,0 +1,4 @@
+RewriteEngine On
+
+RewriteRule ^home$  main.php
+RewriteRule ^data$  action.php
