@@ -6,23 +6,17 @@
             if(!params){
                 url = './data?q=init';
             }else{
-                url = './data?q=init&p='+params.page;
+                url = './data?q=init&bus='+params.bus;
             }
 
             $.ajax({url: url, dataType: 'json', type: 'POST', success: function (data) {
-                $('#main').empty();
                 console.log(data)
+                $('#route-table').find('tbody tr').remove();
                 var html = '';
-                if(data){
-                    for(var oo in data['post']){
-                        html += '<div class="post span3" data-id="'+data['post'][oo]['id']+'"><div class="inner"><span class="link" title="点击浏览">+</span><div class="img-box"><img width="100%" height="100%" src="'+data['post'][oo]['url']+'" alt="图片描述"/></div><div class="caption"><h2>'+data['post'][oo]['title']+':</h2><p>'+data['post'][oo]['desc']+'</p></div></div></div>';
-                    }
-                    window.page = data.page;
+                for(var bus in data){
+                    html+='<tr><td>'+(parseInt(bus)+1)+'</td><td><span class="label label-info">'+data[bus]['bus']+'</span></td><td><span class="detail"><span class="badge badge-info">'+data[bus]['path']+'</span></span></span></td><td><span class="status busy"><span class="badge badge-important">'+data[bus]['status']+'</span></td><td><span class="time"><span class="badge badge-info">'+data[bus]['time']+'</span></td></tr>';
                 }
-
-                html += '<div class="post span3" id="pagination"><div class="inner"><span class="meta">页码</span><div id="pages"><span class="cur">'+data['page']['cur']+'</span> of <span class="total">'+data['page']['total']+'</span></div><div class="page-nav"><a href="#CMD:PREV">上一页 +</a><a href="#CMD:NEXT">下一页 +</a></div></div></div>';
-
-                $('#main').append(html);
+                $('#route-table tbody').append(html);
 
             }
             });
@@ -40,11 +34,8 @@
                         cmd = cmd.split('#CMD:')[1];
 
                         switch (cmd){
-                            case 'NEXT':
-                                initData({page:window.page.next})
-                                break;
-                            case 'PREV':
-                                initData({page:window.page.prev})
+                            case 'SEARCH':
+                                initData({bus:$('#search-query').val().trim()})
                                 break;
                             case 'HOME':
                                 initData()
